@@ -1,0 +1,12 @@
+{
+  "name": "lab1",
+  "version": "1.0.0",
+  "description": "Reviewing API Development",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js",
+    "start": "node app.js"
+  },
+  "author": "Zijing Huang",
+  "license": "ISC"
+}
