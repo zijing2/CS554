@@ -6,7 +6,21 @@ const tasksData = data.tasks;
 const commentsData = data.comments;
 
 router.get("/", (req, res) => {
-    tasksData.getAllTasks().then((tasksList) => {
+    var skip = req.query.skip;
+    var take = req.query.take;
+    
+    if(skip == undefined || skip < 0){
+        skip = 0;
+    }
+    if(take == undefined || take < 0){
+        take = 20;
+    }else if(take>100){
+        take = 100;
+    }
+    skip = parseInt(skip);
+    take = parseInt(take);
+
+    tasksData.getAllTasks(skip, take).then((tasksList) => {
         res.status(200).json(tasksList);
     }).catch((e) => {
         res.status(500).json({ error: e });

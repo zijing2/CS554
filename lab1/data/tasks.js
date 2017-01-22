@@ -4,10 +4,12 @@ const uuid = require('node-uuid');
 
 let exportedMethods = {
 
-    getAllTasks() {
+    getAllTasks(skip, take) {
         return tasks().then((tasksCollection) => {
             return tasksCollection
                 .find({})
+                .skip(skip)
+                .limit(take)
                 .toArray();
         }); 
     },

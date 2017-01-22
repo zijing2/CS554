@@ -1,5 +1,4 @@
 const tasksRoutes = require("./tasks");
-const commentsRoutes = require("./comments");
 
 const constructorMethod = (app) => {
 

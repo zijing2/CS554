@@ -3,11 +3,14 @@ let app = express();
 let configRoutes = require("./routes");
 const bodyParser = require("body-parser");
 
+app.use(bodyParser.json());
+
 //First Middleware
 app.use('*', function (req, res, next) {
-    console.log("req body: "+req.body+"\n",
-                "req route: "+req.baseUrl+"\n",
-                "http verb: "+req.method);
+    console.log("req body: ");
+    console.log(req.body);
+    console.log("req route: "+req.baseUrl);
+    console.log("http verb: "+req.method);
     next();    
 });
 
@@ -26,7 +29,7 @@ app.use('*', function (req, res, next) {
     next();    
 });
 
-app.use(bodyParser.json());
+
 configRoutes(app);
 
 app.listen(3000, () => {
