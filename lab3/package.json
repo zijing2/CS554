@@ -4,9 +4,9 @@
   "description": "Compiling SASS and Bootstrap",
   "main": "app.js",
   "scripts": {
+    "build": "gulp build",
     "test": "node app.js",
-    "start": "node app.js",
-    "build": "gulp build"
+    "start": "node app.js"
   },
   "author": "Zijing Huang",
   "devDependencies": {
