@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Socket.IO chat</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		
+		body {
+			font: 13px Helvetica, Arial;
+		}
+		
+		form {
+			text-align: center;
+			background: #eee;
+			padding: 3px;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+		
+		form select {
+			width: 25%;
+			margin-right: 2.0%;
+		}
+		
+		#messages {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#messages li {
+			padding: 5px 10px;
+		}
+		
+		#messages li:nth-child(odd) {
+			background: #eee;
+		}
+
+		.thumb {
+			margin-bottom: 30px;
+		}
+		
+		img {
+			margin:10px;
+		}
+	</style>
+</head>
+
+<body>
+	<ul id="messages"></ul>
+    <form class="form-inline">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control"  id="name" placeholder="Zijing Huang"
+    </div>
+    <div class="form-group">
+        <label for="key">Search Key</label>
+        <input class="form-control" id="key" placeholder="Logan">
+    </div>
+    <div class="form-group">
+        <label for="m">Message</label>
+        <input class="form-control" id="m" placeholder="She's like you, very much like you">
+    </div>
+    <button type="submit" class="btn btn-default">Send</button>
+    </form>
+	
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+	<script src="/js/jquery.min.js"></script>
+	<script src="/public/js/tota11y.min.js"></script>
+	<script>
+		const nickname = "Phil the Great";
+		const socket = io('http://localhost:3000/chat');
+		const messages = $("#messages");
+		//const messageInput = $("#m");
+        const nameInput = $("#name");
+        const keyInput = $("#key"); 
+        const messageInput = $("#m"); 
+		const theForm = $("form");
+		const roomSelector = $("#room-selector");
+		let currentRoomId = "";
+		socket.on("joined-room", (roomId) => {
+			currentRoomId = roomId;
+			roomSelector.val(roomId);
+		})
+		socket.on('request-credentials', () => {
+			socket.emit('setup', { nickname: nickname });
+		});
+		socket.on('receive-message', function (msg) {
+			var appendHtml = '<li>';
+			appendHtml += '<p>name: '+msg.name+'</p>';
+			appendHtml += '<p>message: '+msg.message+'</p>';
+			if(msg.img.hits.length==0){
+				appendHtml += '<p>Whoops! It seems no image matched</p>';
+			}else{
+				var count=0;
+				for(var i=0;i<msg.img.hits.length;i++){
+					if(count>=5) break;
+					appendHtml += '<img alt="this is a picture" src="'+msg.img.hits[i].previewURL+'">';
+					count++;
+				}
+			}
+			appendHtml+='</li>';
+			messages.append(appendHtml);
+		});
+		theForm.submit(function () {
+			let message = {
+                name: nameInput.val(),
+                key: keyInput.val(),
+                message: messageInput.val(),
+				//text: messageInput.val(),
+				room: currentRoomId
+			};
+			socket.emit('send-message', message);
+            keyInput.val('');
+			messageInput.val('');
+			$("#name").attr("disabled",1);
+			
+			return false;
+		});
+		roomSelector.on("change", () => {
+			let newRoom = roomSelector.val();
+			if (newRoom === currentRoomId) {
+				return;
+			}
+			messages.empty();
+			socket.emit("join-room", {
+				newRoom: newRoom,
+				previousRoom: currentRoomId
+			});
+		})
+		socket.emit("join-room", {
+			newRoom: "general",
+			previousRoom: currentRoomId
+		});
+	</script>
+</body>
+
+</html>
