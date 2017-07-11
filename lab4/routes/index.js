@@ -3,7 +3,7 @@ const recipeRoutes = require("./recipes");
 const constructorMethod = (app) => {
     app.use("/recipes", recipeRoutes);
     app.get("/", (req, res) => {
-        res.render("home", {});
+        res.render("home", {pageTitle:"Lab4"});
     });
     
     app.use("*", (req, res) => {
